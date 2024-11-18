@@ -1,0 +1,92 @@
+
+<div id="rooms-container">
+  <div id="rooms">
+    {% for room in rooms %}
+
+      {# -------------------------------------------------------------------------------------------------- #}
+      {# fenster öffnen --------------------------------------------------------------------------------#}
+        {%  if room.humidity > 61 and not room.windowStatus and room.temperature >= room.outsideTemperature %}
+                  <div class="room">
+                    <div>
+                      <h3>{{ room.name }}</h3>
+                      {{ room.temperature }}°C<br>
+                      {{ room.humidity }}%
+                    </div>
+                    <div class="image font-action" style="background-image: url('https://i.giphy.com/i4Eu10o21SUOFbIe9S.webp')" />
+                      FENSTER ÖFFNEN
+                    </div>
+                  </div>
+      {# -------------------------------------------------------------------------------------------------- #}
+      {# lüftet --------------------------------------------------------------------------------#}
+        {%  elif room.humidity >= 55 and room.windowStatus and room.temperature >= room.outsideTemperature %}
+                  <div class="room">
+                    <div>
+                      <h3>{{ room.name }}</h3>
+                      {{ room.temperature }}°C<br>
+                      {{ room.humidity }}%
+                    </div>
+                    <div class="image font-action" style="background-image: url('https://i.giphy.com/UdL8oTTGRQsIhAxbFU.webp')" />
+                      {{ room.openDuration }}min
+                    </div>
+                  </div>
+      {# -------------------------------------------------------------------------------------------------- #}
+      {# Fenster schließen -------------------------------------------------------------------------------- #}
+        {%  elif room.humidity < 55 and room.windowStatus and room.temperature >= room.outsideTemperature %}
+                  <div class="room background-action">
+                    <div>
+                      <h3>{{ room.name }}</h3>
+                      {{ room.temperature }}°C<br>
+                      {{ room.humidity }}%
+                    </div>
+                    <div class="image font-action"
+                      style="background-image: url('https://i.giphy.com/quzrFyG9TsCAhSp9wY.webp')" />
+                      Fenster schließen<br>
+                      {{ room.openDuration }}min
+                    </div>
+                  </div>
+      {# -------------------------------------------------------------------------------------------------- #}
+      {# lüftet --------------------------------------------------------------------------------#}
+        {%  elif room.windowStatus and room.temperature <= room.outsideTemperature %}
+                  <div class="room background-action">
+                    <div>
+                      <h3>{{ room.name }}</h3>
+                      {{ room.temperature }}°C<br>
+                      {{ room.humidity }}%
+                    </div>
+                    <div class="image font-action"
+                      style="background-image: url('https://i.giphy.com/UdL8oTTGRQsIhAxbFU.webp')" />
+                      Fenster schließen<br>
+                      {{ room.openDuration }}min
+                    </div>
+                  </div>  
+      {# -------------------------------------------------------------------------------------------------- #}
+      {# Fenster schließen --------------------------------------------------------------------------------#}
+        {%  elif room.windowStatus and room.temperature >= room.outsideTemperature and room.openDuration > 15 %}
+                  <div class="room background-action">
+                    <div>
+                      <h3>{{ room.name }}</h3>
+                      {{ room.temperature }}°C<br>
+                      {{ room.humidity }}%
+                    </div>
+                    <div class="image font-action"
+                      style="background-image: url('https://i.giphy.com/quzrFyG9TsCAhSp9wY.webp')" />
+                      Fenster schließen<br>
+                      {{ room.openDuration }}min
+                    </div>
+                  </div>  
+      {# -------------------------------------------------------------------------------------------------- #}
+      {# NORMAL #}  
+        {% else %}
+                <div class="room">
+                  <div>
+                    <h3>{{ room.name }}</h3>
+                    {{ room.temperature }}°C<br>
+                    {{ room.humidity }}%
+                  </div>
+                </div>
+
+        {% endif %}
+
+  
+    {% endfor %}
+</div>

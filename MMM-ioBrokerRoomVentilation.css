@@ -1,0 +1,119 @@
+body {
+  font-family: sans-serif;
+  background-color: #67b4d08d;
+}
+
+#rooms-container {
+  width: 350px;
+}
+
+#rooms {
+  flex-flow: row wrap;
+  flex-direction: row;
+  display: flex;
+
+}
+
+
+.room {
+  background-color: #2e2c2c8d;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+
+  display: flex;
+  justify-content: space-between;
+
+  text-align: center;
+  font-family: sans-serif;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  font-stretch: narrower;
+  color: white;
+
+  border-radius: 10px;
+  border: 5px;
+  border-color: yellow;
+
+  height: 100px;
+  margin: 5px;
+}
+
+
+.room h3 {
+  text-align: center;
+  font-family: sans-serif;
+  font-weight: bolder;
+  font-size: 1.1em;
+  padding-top: 5px;
+  margin:0;;
+
+}
+
+.room div {
+  padding: 0em;
+  width: 100px;
+}
+
+.room .image {
+  background-size: cover;
+  color: red;
+  text-align: center;
+  vertical-align: middle;
+  font-family: sans-serif;
+  font-size: 1.2em;
+  font-weight: bolder;
+}
+
+
+.room img {
+  width: 100px;
+  border-radius: 0px 10px 10px 0px;
+
+}
+
+.font-action {
+  -webkit-animation: ROOM-FONT-ACTION 1s infinite;
+  /* Safari 4+ */
+  -moz-animation: ROOM-FONT-ACTION 1s infinite;
+  /* Fx 5+ */
+  -o-animation: ROOM-FONT-ACTION 1s infinite;
+  /* Opera 12+ */
+  animation: ROOM-FONT-ACTION 1s infinite;
+  /* IE 10+, Fx 29+ */
+}
+
+.background-action {
+  -webkit-animation: ROOM-BACKGROUND-ACTION 1s infinite;
+  /* Safari 4+ */
+  -moz-animation: ROOM-BACKGROUND-ACTION 1s infinite;
+  /* Fx 5+ */
+  -o-animation: ROOM-BACKGROUND-ACTION 1s infinite;
+  /* Opera 12+ */
+  animation: ROOM-BACKGROUND-ACTION 1s infinite;
+  /* IE 10+, Fx 29+ */
+}
+
+@-webkit-keyframes ROOM-BACKGROUND-ACTION {
+
+  0%,
+  49% {
+      background-color: red;
+  }
+
+  50%,
+  100% {
+      background-color: rgba(243, 56, 56, 0.254);
+  }
+}
+
+@-webkit-keyframes ROOM-FONT-ACTION {
+
+  0%,
+  49% {
+      color: red;
+  }
+
+  50%,
+  100% {
+      color: white;
+  }
+}
