@@ -9,8 +9,8 @@
                   <div class="room">
                     <div>
                       <h3>{{ room.name }}</h3>
-                      {{ room.temperature }}°C<br>
-                      {{ room.humidity }}%
+                      {{ room.temperature }}°C
+                      {% if room.humidity %} <br>{{ room.humidity }}% {% endif %}
                     </div>
                     <div class="image font-action" style="background-image: url('https://i.giphy.com/i4Eu10o21SUOFbIe9S.webp')" />
                       FENSTER ÖFFNEN
@@ -22,8 +22,8 @@
                   <div class="room">
                     <div>
                       <h3>{{ room.name }}</h3>
-                      {{ room.temperature }}°C<br>
-                      {{ room.humidity }}%
+                      {{ room.temperature }}°C
+                      {% if room.humidity %} <br>{{ room.humidity }}% {% endif %}
                     </div>
                     <div class="image font-action" style="background-image: url('https://i.giphy.com/UdL8oTTGRQsIhAxbFU.webp')" />
                       {{ room.openDuration }}min
@@ -35,8 +35,8 @@
                   <div class="room background-action">
                     <div>
                       <h3>{{ room.name }}</h3>
-                      {{ room.temperature }}°C<br>
-                      {{ room.humidity }}%
+                      {{ room.temperature }}°C
+                      {% if room.humidity %} <br>{{ room.humidity }}% {% endif %}
                     </div>
                     <div class="image font-action"
                       style="background-image: url('https://i.giphy.com/quzrFyG9TsCAhSp9wY.webp')" />
@@ -50,8 +50,8 @@
                   <div class="room background-action">
                     <div>
                       <h3>{{ room.name }}</h3>
-                      {{ room.temperature }}°C<br>
-                      {{ room.humidity }}%
+                      {{ room.temperature }}°C
+                      {% if room.humidity %} <br>{{ room.humidity }}% {% endif %}
                     </div>
                     <div class="image font-action"
                       style="background-image: url('https://i.giphy.com/UdL8oTTGRQsIhAxbFU.webp')" />
@@ -65,8 +65,8 @@
                   <div class="room background-action">
                     <div>
                       <h3>{{ room.name }}</h3>
-                      {{ room.temperature }}°C<br>
-                      {{ room.humidity }}%
+                      {{ room.temperature }}°C
+                      {% if room.humidity %} <br>{{ room.humidity }}% {% endif %}
                     </div>
                     <div class="image font-action"
                       style="background-image: url('https://i.giphy.com/quzrFyG9TsCAhSp9wY.webp')" />
@@ -80,8 +80,8 @@
                 <div class="room">
                   <div>
                     <h3>{{ room.name }}</h3>
-                    {{ room.temperature }}°C<br>
-                    {{ room.humidity }}%
+                    {{ room.temperature }}°C
+                    {% if room.humidity %} <br>{{ room.humidity }}% {% endif %}
                   </div>
                 </div>
 
