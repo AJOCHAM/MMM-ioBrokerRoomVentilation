@@ -1,0 +1,16 @@
+<div class="washer-data">
+  {% for washer in washers %} 
+    <div class="washer">
+     <!--h2>{{ washer.name }}</h2-->
+      <!-- washer.progress: {{ washer.progress }}% -->
+      <div class="progress-bar">
+        <div class="progress" style="width: {{ washer.progress }}%;"></div>
+      </div>
+      {% if washer.remainingTime > 119 %}
+      <p>Verbleibende Zeit: {{ washer.remainingTime }} Sekunden</p>
+      {% else %}
+      <p>Verbleibende Zeit: {{ washer.remainingTime / 60 }} Minuten</p>
+      {% endif%}
+    </div>
+  {% endfor %}
+</div>
