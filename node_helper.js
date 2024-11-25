@@ -30,10 +30,10 @@ module.exports = NodeHelper.create({
         ]);
 
         // Calculate open duration if the window is open
-        let openDuration = 0;
+        let finishedDuration = 0;
         if (windowStatus.data.val) { // Window is open
           const lastChanged = windowStatusMeta.data.lc;
-          openDuration = Math.floor((Date.now() - lastChanged) / 60000); // Duration in seconds
+          finishedDuration = Math.floor((Date.now() - lastChanged) / 60000); // Duration in seconds
         }
 
         roomData.push({
@@ -43,7 +43,7 @@ module.exports = NodeHelper.create({
           windowStatus: windowStatus.data.val,
           outsideTemperature: outsideTemperature.data.val,
           lastChanged: windowStatusMeta.data.ts,
-          openDuration: openDuration
+          finishedDuration: finishedDuration
         });
       } catch (error) {
         console.error("Error fetching data for room:", room.name, error);
