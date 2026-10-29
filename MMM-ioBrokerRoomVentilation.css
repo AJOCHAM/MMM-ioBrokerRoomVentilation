@@ -1,119 +1,217 @@
-body {
-  font-family: sans-serif;
-  background-color: #67b4d08d;
+/* MMM-ioBrokerRoomVentilation – fluides Kachel-Layout (2026-10-20)
+   Fensterzustände: .win-closed  .win-shouldOpen  .win-open  .win-shouldClose  (.win-unknown = kein Sensor) */
+
+.room-container {
+  --vent-closed: rgba(199, 198, 198, 0.7);
+  --vent-open: #3ddc97;
+  --vent-should-open: #4db2ff;
+  --vent-should-close: #ffa53a;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--vent-tile, 96px), 1fr));
+  grid-auto-flow: row dense;           /* breite Kacheln füllen Lücken auf */
+  gap: 8px;
+  width: var(--vent-width, 330px);
+  max-width: 100%;
+  font-family: Arial, sans-serif;
+  text-align: left;
 }
 
-#rooms-container {
-  width: 340px;
-}
-
-#rooms {
-  flex-flow: row wrap;
-  flex-direction: row;
+/* ---------- Kachel ---------- */
+.room-box {
+  --accent: var(--vent-closed);
+  position: relative;
+  min-width: 0;
+  min-height: 82px;                    /* wächst mit dem Inhalt, keine feste Höhe mehr */
+  padding: 8px 9px 8px 11px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  background: rgba(195, 194, 194, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 3px 0 0 var(--accent);
+  color: #fff;
   display: flex;
-
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+  transition: background 0.5s, border-color 0.5s, box-shadow 0.5s;
 }
 
-
-.room {
-  background-color: #2e2c2c00;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-
+.room-box .room-name {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-
-  text-align: center;
-  font-family: sans-serif;
+  gap: 4px;
   font-size: 0.8em;
+  font-weight: bold;
+  line-height: 1.1;
+}
+.room-box .name-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.room-climate { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+.room-temp { font-size: 1.15em; font-weight: bold; line-height: 1; letter-spacing: -0.02em; }
+.room-hum  { font-size: 0.65em; opacity: 0.75; }
+
+.room-box .room-detail {
+  font-size: 0.58em;
+  line-height: 1.25;
+  opacity: 0.9;
+}
+.room-box .room-detail.muted { opacity: 0.55; }
+
+/* Fenster-Chip: Symbol = tatsächlicher Zustand, Text = was zu tun ist */
+.win-chip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 5px;
+  font-size: 0.58em;
+  font-weight: bold;
   text-transform: uppercase;
-  font-stretch: narrower;
-  color: rgba(255, 255, 255, 0.579);
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  color: var(--accent);
+}
+.win-icon { flex-shrink: 0; display: block; }
+.win-chip .soll { margin-left: auto; color: rgba(255,255,255,0.5); text-transform: none; letter-spacing: 0; font-weight: normal; }
 
+/* Fortschritt der erlaubten Lüftdauer */
+.vent-progress {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+}
+.vent-progress > span {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--accent);
+  transition: width 1s ease;
+}
+.vent-progress.near > span { background: var(--vent-should-close); }
+
+/* ---------- Zustände ---------- */
+
+/* zu & alles gut: ruhig, tritt zurück */
+.win-closed, .win-unknown { --accent: rgba(255, 255, 255, 0.18); }
+.win-closed .win-chip { color: var(--vent-closed); }
+
+/* sollte geöffnet werden: blau, „atmet“ sanft */
+.win-shouldOpen {
+  --accent: var(--vent-should-open);
+  background: rgba(77, 178, 255, 0.6);
+  border-color: rgba(77, 178, 255, 0.55);
+  animation: vent-breathe 3s ease-in-out infinite;
+}
+
+/* offen: grün mit Laufzeit */
+.win-open {
+  --accent: var(--vent-open);
+  background: rgba(61, 220, 151, 0.6);
+  border-color: rgba(61, 220, 151, 0.5);
+}
+
+/* sollte geschlossen werden: orange, Kachel wird doppelt breit */
+.win-shouldClose {
+  --accent: var(--vent-should-close);
+  background: rgba(255, 165, 58, 0.7);
+  border-color: var(--vent-should-close);
+  grid-column: span 2;
+}
+.win-shouldClose .win-chip { font-size: 0.68em; }
+.win-shouldClose .room-detail { font-size: 0.64em; }
+
+@keyframes vent-breathe {
+  0%, 100% { box-shadow: inset 3px 0 0 var(--accent), 0 0 0 0 rgba(77, 178, 255, 0); }
+  50%      { box-shadow: inset 3px 0 0 var(--accent), 0 0 12px 1px rgba(77, 178, 255, 0.55); }
+}
+
+/* zu lange offen (Alarm): rot/weiß blinkend wie bisher */
+.room-box.status-urgent {
+  grid-column: span 2;
+  animation: vent-alarm 0.9s steps(1, end) infinite !important;
+  box-shadow: 0 0 14px 4px rgba(255, 40, 40, 0.9);
+  border-color: transparent;
+}
+.status-urgent .win-chip,
+.status-urgent .vent-progress > span { color: currentColor; background-color: currentColor; }
+.status-urgent .win-chip { background: none; }
+@keyframes vent-alarm {
+  0%  { background: #ff1a1a; color: #fff; }
+  50% { background: #ffffff; color: #d00000; }
+}
+
+/* Zustand hat sich gerade geändert: Inhalt blendet weich ein */
+.room-box.just-changed > * { animation: vent-in 0.6s ease-out both; }
+@keyframes vent-in {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Batterie / offline: Kachel wächst um eine Zeile pro Gerät */
+.room-box .room-detail.battery {
+  color: #ff6060;
+  font-weight: bold;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 3px;
+  margin-top: 1px;
+}
+.room-box .room-detail.battery > div { overflow-wrap: anywhere; }
+.status-urgent .room-detail.battery { color: inherit; }
+
+/* ---------- Licht ---------- */
+.light-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+}
+.light-icon svg { display: block; }
+.light-on { width: 22px; height: 22px; background-color: rgba(255, 220, 50, 0.25); box-shadow: 0 0 5px 2px rgba(255, 220, 50, 0.6); }
+.light-on svg path { fill: #ffd932; }
+.light-off { background-color: transparent; }
+.light-off svg path { fill: rgba(255, 255, 255, 0.25); }
+.light-icon.light-pending { animation: vent-pulse 0.8s ease-in-out infinite; }
+.light-icon.light-error { box-shadow: 0 0 5px 2px rgba(255, 60, 60, 0.8); }
+@keyframes vent-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+
+.room-box.clickable { cursor: pointer; }
+.room-box.clickable:active { transform: scale(0.97); }
+
+/* ---------- Geräte ohne Raum ---------- */
+.room-box.device-box {
+  grid-column: 1 / -1;
+  min-height: 0;
+  --accent: #f5a623;
+  background: rgba(245, 166, 35, 0.22);
+  border-color: rgba(245, 166, 35, 0.6);
+}
+.device-box .device-count {
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 8px;
+  padding: 0 6px;
+  font-size: 0.85em;
+}
+.device-box .device-list {
+  margin: 0;
+  padding-left: 14px;
+  font-size: 0.6em;
+  line-height: 1.3em;
+  columns: 2;
+  column-gap: 12px;
+}
+.device-box .device-list li { break-inside: avoid; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ---------- Alarm-Banner ---------- */
+.vent-banner {
+  grid-column: 1 / -1;
+  padding: 6px 8px;
   border-radius: 10px;
-  border: 5px;
-  border-color: yellow;
-
-  height: 100px;
-  margin: 5px;
-}
-
-
-.room h3 {
+  font-size: 0.8em;
+  font-weight: bold;
   text-align: center;
-  font-family: sans-serif;
-  font-weight: bolder;
-  font-size: 1.1em;
-  padding-top: 5px;
-  margin:0;;
-
-}
-
-.room div {
-  padding: 0em;
-  width: 100px;
-}
-
-.room .image {
-  background-size: cover;
-  color: red;
-  text-align: center;
-  vertical-align: middle;
-  font-family: sans-serif;
-  font-size: 1.2em;
-  font-weight: bolder;
-}
-
-
-.room img {
-  width: 100px;
-  border-radius: 0px 10px 10px 0px;
-
-}
-
-.font-action {
-  -webkit-animation: ROOM-FONT-ACTION 1s infinite;
-  /* Safari 4+ */
-  -moz-animation: ROOM-FONT-ACTION 1s infinite;
-  /* Fx 5+ */
-  -o-animation: ROOM-FONT-ACTION 1s infinite;
-  /* Opera 12+ */
-  animation: ROOM-FONT-ACTION 1s infinite;
-  /* IE 10+, Fx 29+ */
-}
-
-.background-action {
-  -webkit-animation: ROOM-BACKGROUND-ACTION 1s infinite;
-  /* Safari 4+ */
-  -moz-animation: ROOM-BACKGROUND-ACTION 1s infinite;
-  /* Fx 5+ */
-  -o-animation: ROOM-BACKGROUND-ACTION 1s infinite;
-  /* Opera 12+ */
-  animation: ROOM-BACKGROUND-ACTION 1s infinite;
-  /* IE 10+, Fx 29+ */
-}
-
-@-webkit-keyframes ROOM-BACKGROUND-ACTION {
-
-  0%,
-  49% {
-      background-color: red;
-  }
-
-  50%,
-  100% {
-      background-color: rgba(243, 56, 56, 0.254);
-  }
-}
-
-@-webkit-keyframes ROOM-FONT-ACTION {
-
-  0%,
-  49% {
-      color: red;
-  }
-
-  50%,
-  100% {
-      color: white;
-  }
+  animation: vent-alarm 0.9s steps(1, end) infinite;
 }

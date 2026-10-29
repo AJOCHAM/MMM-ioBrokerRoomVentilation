@@ -1,0 +1,67 @@
+
+<div id="rooms-container">
+  <div id="rooms">
+    {% for room in rooms %}
+
+      {# -------------------------------------------------------------------------------------------------- #}
+      {# fenster öffnen --------------------------------------------------------------------------------#}
+        {%  if room.humidity > 61 and not room.windowStatus and room.temperature >= room.outsideTemperature %}
+                  <div class="room background-noaction">
+                    <div>
+                      <h3>{{ room.name }}</h3>
+                      <span class="font-action-easy small">{{ room.temperature }}°C<br>FENSTER ÖFFNEN</span>
+                    </div>
+                  </div>
+      {# -------------------------------------------------------------------------------------------------- #}
+      {# lüftet --------------------------------------------------------------------------------#}
+        {%  elif room.humidity >= 55 and room.windowStatus and room.temperature >= room.outsideTemperature %}
+                  <div class="room background-noaction">
+                    <div>
+                      <h3>{{ room.name }}</h3>
+                      <span class="font-action-easy small">{{ room.temperature }}°C<br>{{ room.openDuration }} min</span>
+                    </div>
+                    
+                  </div>
+      {# -------------------------------------------------------------------------------------------------- #}
+      {# Fenster schließen -------------------------------------------------------------------------------- #}
+        {%  elif room.humidity < 55 and room.windowStatus and room.temperature >= room.outsideTemperature %}
+                  <div class="room background-noaction">
+                    <div>
+                      <h3>{{ room.name }}</h3>
+                      <span class="font-action-easy small">{{ room.temperature }}°C<br>Fenster offen<br>{{ room.openDuration }} min</span>
+                    </div>
+                  </div>
+      {# -------------------------------------------------------------------------------------------------- #}
+      {# lüftet --------------------------------------------------------------------------------#}
+        {%  elif room.windowStatus and room.temperature <= room.outsideTemperature %}
+                  <div class="room background-noaction">
+                    <div>
+                      <h3>{{ room.name }}</h3>
+                      <span class="font-action-easy small">{{ room.temperature }}°C<br>Lüftet ({{ room.openDuration }}&nbsp;min)</span>
+                    </div>
+                  </div>  
+      {# -------------------------------------------------------------------------------------------------- #}
+      {# Fenster schließen --------------------------------------------------------------------------------#}
+        {%  elif room.windowStatus and room.temperature >= room.outsideTemperature and room.openDuration > 15 %}
+                  <div class="room background-action">
+                    <div>
+                      <h3>{{ room.name }}</h3>
+                      <span class="font-action small">{{ room.temperature }}°C<br>Fenster schließen<br>{{ room.openDuration }} min</span>
+                    </div>
+                  </div>  
+      {# -------------------------------------------------------------------------------------------------- #}
+      {# NORMAL #}  
+        {% else %}
+                <div class="room">
+                  <div>
+                    <h3>{{ room.name }}</h3>
+                    {{ room.temperature }}°C
+                    {% if room.humidity %} <br>{{ room.humidity }}% {% endif %}
+                  </div>
+                </div>
+
+        {% endif %}
+
+  
+    {% endfor %}
+</div>

@@ -1,0 +1,140 @@
+<div class="room-container">
+
+        <!--div class="room-box status-empty">
+                <div class="room-name">Aussen</div>
+                <div class="room-info">{{ rooms[0].outsideTemperature }}°C</div>
+                <div class="room-detail"></div>
+        </div-->
+
+{% for room in rooms %}
+  
+
+      {# -------------------------------------------------------------------------------------------------- #}
+      {# fenster öffnen --------------------------------------------------------------------------------#}
+        {%  if room.humidity > 61 and not room.windowStatus and room.temperature >= room.outsideTemperature+3 %}
+
+        <div class="room-box status-aware">
+                <div class="room-name">{{ room.name }}
+                        {% if room.lightStatus !== null %}
+                        <span class="light-icon {{ 'light-on' if room.lightStatus else 'light-off' }}" title="{{ 'Licht an' if room.lightStatus else 'Licht aus' }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12"><path d="M12 2a7 7 0 0 1 5 11.9V17a1 1 0 0 1-1 1h-8a1 1 0 0 1-1-1v-3.1A7 7 0 0 1 12 2zm3 17v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-1h6z"/></svg>
+                        </span>
+                        {% endif %}
+                </div>
+                <div class="room-info"><b>{{ room.temperature }}°C</b>{% if room.humidity %}&nbsp;&nbsp;|&nbsp;&nbsp;{{ room.humidity }}% {% endif %}
+                        {% if room.setTemperature %}<br><i>Soll: {{ room.setTemperature }}°C</i>{% endif %} 
+                </div>
+                <div class="room-detail">Fenster öffnen</div>
+                {%  if room.battery1 or room.battery2 %}
+                <div class="room-detail" style="color:red">BATTERIE!!</div>
+                {% endif %}
+
+        </div>
+
+
+      {# -------------------------------------------------------------------------------------------------- #}
+      {# lüftet --------------------------------------------------------------------------------#}
+        {%  elif room.humidity >= 55 and room.windowStatus and room.temperature >= room.outsideTemperature+3 %}
+
+
+        <div class="room-box status-aware">
+                <div class="room-name">{{ room.name }}
+                        {% if room.lightStatus !== null %}
+                        <span class="light-icon {{ 'light-on' if room.lightStatus else 'light-off' }}" title="{{ 'Licht an' if room.lightStatus else 'Licht aus' }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12"><path d="M12 2a7 7 0 0 1 5 11.9V17a1 1 0 0 1-1 1h-8a1 1 0 0 1-1-1v-3.1A7 7 0 0 1 12 2zm3 17v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-1h6z"/></svg>
+                        </span>
+                        {% endif %}
+                </div>
+                <div class="room-info">{{ room.temperature }}°C{% if room.humidity %}&nbsp;&nbsp;|&nbsp;&nbsp;{{ room.humidity }}% {% endif %}</div>
+                <div class="room-detail">Lüftet<br>{{ room.openDuration }} min</div>
+                {%  if room.battery1 or room.battery2 %}
+                <div class="room-detail" style="color:red">BATTERIE!!</div>
+                {% endif %}
+        </div>
+
+
+      {# -------------------------------------------------------------------------------------------------- #}
+      {# Fenster schließen -------------------------------------------------------------------------------- #}
+        {%  elif room.humidity < 55 and room.windowStatus and room.temperature >= room.outsideTemperature+3 %}
+
+
+        <div class="room-box status-alert">
+                <div class="room-name">{{ room.name }}
+                        {% if room.lightStatus !== null %}
+                        <span class="light-icon {{ 'light-on' if room.lightStatus else 'light-off' }}" title="{{ 'Licht an' if room.lightStatus else 'Licht aus' }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12"><path d="M12 2a7 7 0 0 1 5 11.9V17a1 1 0 0 1-1 1h-8a1 1 0 0 1-1-1v-3.1A7 7 0 0 1 12 2zm3 17v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-1h6z"/></svg>
+                        </span>
+                        {% endif %}
+                </div>
+                <div class="room-info">{{ room.temperature }}°C{% if room.humidity %}&nbsp;&nbsp;|&nbsp;&nbsp;{{ room.humidity }}% {% endif %}</div>
+                <div class="room-detail">Fenster schließen<br>{{ room.openDuration }} min</div>
+                {%  if room.battery1 or room.battery2 %}
+                <div class="room-detail" style="color:red">BATTERIE!!</div>
+                {% endif %}
+        </div>
+
+      {# -------------------------------------------------------------------------------------------------- #}
+      {# lüftet --------------------------------------------------------------------------------#}
+        {%  elif room.windowStatus and room.temperature <= room.outsideTemperature+3 %}
+        
+        <div class="room-box status-aware">
+                <div class="room-name">{{ room.name }}
+                        {% if room.lightStatus !== null %}
+                        <span class="light-icon {{ 'light-on' if room.lightStatus else 'light-off' }}" title="{{ 'Licht an' if room.lightStatus else 'Licht aus' }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12"><path d="M12 2a7 7 0 0 1 5 11.9V17a1 1 0 0 1-1 1h-8a1 1 0 0 1-1-1v-3.1A7 7 0 0 1 12 2zm3 17v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-1h6z"/></svg>
+                        </span>
+                        {% endif %}
+                </div>
+                <div class="room-info">{{ room.temperature }}°C{% if room.humidity %}&nbsp;&nbsp;|&nbsp;&nbsp;{{ room.humidity }}% {% endif %}</div>
+                <div class="room-detail">Lüftet<br>{{ room.openDuration }} min</div>
+                {%  if room.battery1 or room.battery2 %}
+                <div class="room-detail" style="color:red">BATTERIE!!</div>
+                {% endif %}
+        </div>
+
+      {# -------------------------------------------------------------------------------------------------- #}
+      {# Fenster schließen --------------------------------------------------------------------------------#}
+        {%  elif room.windowStatus and room.temperature >= room.outsideTemperature+3 and room.openDuration > 15 %}
+
+        <div class="room-box status-alert">
+                <div class="room-name">{{ room.name }}
+                        {% if room.lightStatus !== null %}
+                        <span class="light-icon {{ 'light-on' if room.lightStatus else 'light-off' }}" title="{{ 'Licht an' if room.lightStatus else 'Licht aus' }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12"><path d="M12 2a7 7 0 0 1 5 11.9V17a1 1 0 0 1-1 1h-8a1 1 0 0 1-1-1v-3.1A7 7 0 0 1 12 2zm3 17v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-1h6z"/></svg>
+                        </span>
+                        {% endif %}
+                </div>
+                <div class="room-info">{{ room.temperature }}°C{% if room.humidity %}&nbsp;&nbsp;|&nbsp;&nbsp;{{ room.humidity }}% {% endif %}</div>
+                <div class="room-detail">Fenster schließen<br>{{ room.openDuration }} min</div>
+                {%  if room.battery1 or room.battery2 %}
+                <div class="room-detail" style="color:red">BATTERIE!!</div>
+                {% endif %}
+        </div>
+
+      {# -------------------------------------------------------------------------------------------------- #}
+      {# NORMAL #}  
+        {% else %}
+
+        <div class="room-box status-standard">
+                <div class="room-name">{{ room.name }}
+                        {% if room.lightStatus !== null %}
+                        <span class="light-icon {{ 'light-on' if room.lightStatus else 'light-off' }}" title="{{ 'Licht an' if room.lightStatus else 'Licht aus' }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12"><path d="M12 2a7 7 0 0 1 5 11.9V17a1 1 0 0 1-1 1h-8a1 1 0 0 1-1-1v-3.1A7 7 0 0 1 12 2zm3 17v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-1h6z"/></svg>
+                        </span>
+                        {% endif %}
+                </div>
+                <div class="room-info"><b>{{ room.temperature }}°C</b>{% if room.humidity %}&nbsp;&nbsp;|&nbsp;&nbsp;{{ room.humidity }}% {% endif %}
+                        {% if room.setTemperature %}<br><i>Soll: {{ room.setTemperature }}°C</i>{% endif %} 
+                </div>
+                
+                <div class="room-detail"></div>
+                {%  if room.battery1 or room.battery2 %}
+                        <div class="room-detail" style="color:red">BATTERIE!!</div>
+                {% endif %}
+        </div>
+
+        {% endif %}
+
+  
+    {% endfor %}
+</div>

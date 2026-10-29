@@ -1,0 +1,72 @@
+{% macro winIcon(isOpen) %}
+<svg class="win-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
+  {% if isOpen %}<rect x="3" y="3" width="18" height="18" rx="1.5" opacity=".45"/><path d="M3 3l9 3v18l-9-3z" fill="currentColor" fill-opacity=".35"/>
+  {% else %}<rect x="3" y="3" width="18" height="18" rx="1.5"/><path d="M12 3v18M3 12h18"/>{% endif %}
+</svg>
+{% endmacro %}
+<div class="room-container" style="{{ style }}">
+{% if alarmRooms and alarmRooms.length %}
+  <div class="vent-banner">⚠ Fenster schließen: {{ alarmRooms | join(", ") }}</div>
+{% endif %}
+{% for room in rooms %}
+  {% if room.isDeviceTile %}
+  <div class="room-box device-box">
+    <div class="room-name"><span class="name-text">{{ room.name }}</span> <span class="device-count">{{ room.deviceList.length }}</span></div>
+    <ul class="device-list">
+      {% for d in room.deviceList %}
+      <li>{{ d.name }}{% if d.kind == "unreach" %} <i>(offline)</i>{% endif %}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% else %}
+  {% set a = room.advice or { status: "standard", label: "", detail: "" } %}
+  {% set w = a.win or "unknown" %}
+  {% set clickable = lightClick and room.lightStatus !== null and (room.lightStatus or lightClick == "toggle") %}
+  <div class="room-box win-{{ w }} status-{{ a.status }}{{ ' clickable' if clickable }}{{ ' just-changed' if room.justChanged }}"{% if clickable %} data-light-room="{{ room.name }}"{% endif %}>
+    <div class="room-name"><span class="name-text">{{ room.name }}</span>
+      {% if room.lightStatus !== null %}
+      <span class="light-icon {{ 'light-on' if room.lightStatus else 'light-off' }}{{ ' light-pending' if room.lightPending }}{{ ' light-error' if room.lightError }}" title="{{ 'Licht an – antippen zum Ausschalten' if room.lightStatus else 'Licht aus' }}">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12"><path d="M12 2a7 7 0 0 1 5 11.9V17a1 1 0 0 1-1 1h-8a1 1 0 0 1-1-1v-3.1A7 7 0 0 1 12 2zm3 17v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-1h6z"/></svg>
+      </span>
+      {% endif %}
+    </div>
+
+    <div class="room-climate">
+      <span class="room-temp">{{ room.temperature }}°</span>
+      {% if room.humidity %}<span class="room-hum">{{ room.humidity }}%</span>{% endif %}
+    </div>
+
+    {% if w == "shouldOpen" %}
+      <div class="win-chip">{{ winIcon(false) }}<span>{{ a.label or "Fenster öffnen" }}</span></div>
+      {% if a.detail %}<div class="room-detail">{{ a.detail }}</div>{% endif %}
+    {% elif w == "open" %}
+      <div class="win-chip">{{ winIcon(true) }}<span>Offen · {{ room.openDuration or 0 }} min</span></div>
+      {% if a.progress !== null and a.progress !== undefined %}
+        <div class="vent-progress{{ ' near' if a.progress >= 75 }}"><span style="width:{{ a.progress }}%"></span></div>
+      {% endif %}
+      {% if a.detail %}<div class="room-detail">{{ a.detail }}</div>{% endif %}
+    {% elif w == "shouldClose" %}
+      <div class="win-chip">{{ winIcon(true) }}<span>{{ a.label or "Fenster schließen" }}</span></div>
+      {% if a.progress !== null and a.progress !== undefined %}
+        <div class="vent-progress near"><span style="width:{{ a.progress }}%"></span></div>
+      {% endif %}
+      {% if a.detail %}<div class="room-detail">{{ a.detail }}</div>{% endif %}
+      {% if a.reason == "tooLong" and room.alarmCount %}<div class="room-detail">Alexa {{ room.alarmCount }}/{{ room.alarmMax }}</div>{% endif %}
+    {% elif w == "closed" %}
+      <div class="win-chip">{{ winIcon(false) }}<span>zu</span>{% if room.setTemperature %}<span class="soll">Soll {{ room.setTemperature }}°</span>{% endif %}</div>
+      {% if a.detail %}<div class="room-detail muted">{{ a.detail }}</div>{% endif %}
+    {% else %}
+      {% if room.setTemperature %}<div class="room-detail muted">Soll {{ room.setTemperature }}°</div>{% endif %}
+      {% if a.detail %}<div class="room-detail muted">{{ a.detail }}</div>{% endif %}
+    {% endif %}
+
+    {% if room.deviceIssues and room.deviceIssues.length %}
+      <div class="room-detail battery">
+        {% for x in room.deviceIssues %}<div>{{ '⚡ Offline' if x.kind == 'unreach' else '🔋 Batterie' }}: {{ x.name }}</div>{% endfor %}
+      </div>
+    {% endif %}
+    {% if room.hasError %}<div class="room-detail muted">keine Daten</div>{% endif %}
+  </div>
+  {% endif %}
+{% endfor %}
+</div>
